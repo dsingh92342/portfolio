@@ -10,8 +10,11 @@ function App() {
   const [isHovering, setIsHovering] = useState(false);
   const [metabolicRate, setMetabolicRate] = useState(98.4);
 
+  const [scrollProgress, setScrollProgress] = useState(0);
+
   const cursorRef = useRef(null);
   const auraRef = useRef(null);
+  const contactFormRef = useRef(null);
 
   // High-Performance Loading Orbit
   useEffect(() => {
@@ -62,13 +65,17 @@ function App() {
     };
 
     const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (window.scrollY / totalScroll) * 100;
+      setScrollProgress(progress);
+
       setScrolled(window.scrollY > 100);
-      const sections = ['home', 'bio', 'work', 'connect'];
+      const sections = ['home', 'bio', 'skills', 'work', 'connect'];
       sections.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= 200 && rect.bottom >= 200) {
+          if (rect.top <= 300 && rect.bottom >= 300) {
             setActiveTab(id);
           }
         }
@@ -121,6 +128,15 @@ function App() {
       fullDesc: "A research project mapping mitochondrial energy exchange protocols to microservice load-balancing. Successfully simulated metabolic resilience in distributed Go environments with self-healing nodes.",
       tech: ["Go", "Kubernetes", "gRPC", "Docker"],
       links: { github: "#", demo: "#" }
+    },
+    {
+      id: 4,
+      title: "Synapse Scheduler",
+      image: "/neural-engine.png",
+      desc: "Low-latency task prioritization for mobile nodes.",
+      fullDesc: "Modeled after neural synaptic delay variations to prioritize critical UI threads. Reduced frame drops by 40% in heavy computational Android environments through biological wait-state logic.",
+      tech: ["C++", "NDK", "Java", "Android Systems"],
+      links: { github: "#", demo: "#" }
     }
   ];
 
@@ -130,6 +146,10 @@ function App() {
       <div className={`premium-loader ${!loading ? 'hidden' : ''}`}>
         <div className="loader-bar"><div className="loader-progress"></div></div>
         <div className="loader-text">Metabolizing Interface Architecture...</div>
+      </div>
+
+      <div className="scroll-progress-container">
+        <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }}></div>
       </div>
 
       <div className="grain-overlay"></div>
@@ -148,7 +168,7 @@ function App() {
       <header className={`nav-shell ${scrolled ? 'scrolled' : ''}`}>
         <nav className="nav-content">
           <div className="nav-group">
-            {['home', 'bio', 'work'].map(item => (
+            {['home', 'bio', 'skills', 'work'].map(item => (
               <a
                 key={item}
                 href={`#${item}`}
@@ -226,6 +246,35 @@ function App() {
         </div>
       </section>
 
+      {/* Skills Matrix */}
+      <section id="skills" className="container" style={{ padding: '12rem 0' }}>
+        <div className="section-header reveal" style={{ marginBottom: '8rem', textAlign: 'center' }}>
+          <h2 className="gradient-text" style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)' }}>Neural Clusters</h2>
+        </div>
+        <div className="skills-grid reveal">
+          {[
+            { category: "Android Systems", skills: ["Jetpack Compose", "Coroutines/Flow", "Dependency Injection", "Memory Management"] },
+            { category: "Biological Logic", skills: ["Zoology Protocols", "Cellular Mapping", "Metabolic Sync", "Genetic Architecture"] },
+            { category: "High-Intent AI", skills: ["Prompt Orchestration", "Recursive Chaining", "Agentic Frameworks", "Neural Fine-tuning"] }
+          ].map((cluster, idx) => (
+            <div key={idx} className="skill-cluster glass">
+              <h3 style={{ fontSize: '1rem', marginBottom: '2rem', color: 'var(--primary-accent)', letterSpacing: '0.2em' }}>{cluster.category}</h3>
+              <div className="skills-list">
+                {cluster.skills.map((skill, sIdx) => (
+                  <div key={sIdx} className="skill-item">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span className="skill-name" style={{ fontSize: '0.8rem', opacity: 0.7 }}>{skill}</span>
+                      <span style={{ fontSize: '0.6rem', color: 'var(--primary-accent)' }}>{85 + (idx * 2)}%</span>
+                    </div>
+                    <div className="skill-bar"><div className="skill-fill" style={{ width: `${85 + (idx * 2)}%` }}></div></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Artifact Grid */}
       <section id="work" className="container" style={{ padding: '12rem 0' }}>
         <div className="section-header reveal" style={{ marginBottom: '6rem' }}>
@@ -289,15 +338,33 @@ function App() {
         )}
       </div>
 
-      <footer id="connect" className="container" style={{ padding: '6rem 1.5rem' }}>
-        <h2 className="gradient-text reveal" style={{ fontSize: '2.5rem', marginBottom: '3rem', textAlign: 'center' }}>Neural Sync</h2>
-        <div className="reveal" style={{ display: 'flex', gap: '2.5rem', justifyContent: 'center', marginBottom: '6rem', flexWrap: 'wrap' }}>
-          <a href="https://github.com/dsingh92342" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">GitHub</a>
-          <a href="#" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">LinkedIn</a>
-          <a href="#" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">Twitter</a>
+      {/* Pulse Signal Section */}
+      <section id="connect" className="container" style={{ padding: '12rem 0' }}>
+        <div className="section-header reveal" style={{ marginBottom: '6rem', textAlign: 'center' }}>
+          <h2 className="gradient-text" style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)' }}>Pulse Signal</h2>
+          <p style={{ opacity: 0.5, marginTop: '1rem' }}>Initiate a direct neural link for collaboration or architectural consultation.</p>
         </div>
 
-        {/* Elite System Dash */}
+        <div className="contact-frame reveal glass">
+          <form className="neural-form" onSubmit={(e) => e.preventDefault()}>
+            <div className="form-group">
+              <label>SIGNAL SOURCE (NAME)</label>
+              <input type="text" placeholder="Identity Matrix..." />
+            </div>
+            <div className="form-group">
+              <label>RETURN FREQUENCY (EMAIL)</label>
+              <input type="email" placeholder="network@domain.com" />
+            </div>
+            <div className="form-group">
+              <label>PAYLOAD (MESSAGE)</label>
+              <textarea rows="5" placeholder="Inbound architectural request..."></textarea>
+            </div>
+            <button className="btn" style={{ width: '100%', marginTop: '2rem' }}>DISPATCH SIGNAL</button>
+          </form>
+        </div>
+      </section>
+
+      <footer className="container" style={{ padding: '4rem 1.5rem 8rem' }}>
         <div className="system-dash reveal">
           <div className="stat-node">
             <span className="stat-label">Synapse Depth</span>

@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import emailjs from '@emailjs/browser'
 import './App.css'
 
 function App() {
@@ -16,13 +15,24 @@ function App() {
   const followerRef = useRef(null);
   const formRef = useRef();
 
-  // Loading Screen Timer
+  // Loading Metabolism
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
+    const timer = setTimeout(() => {
+      setLoading(false);
+      // Trigger animations after loader clears
+      setTimeout(() => {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+          });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal, .stagger-container').forEach(el => observer.observe(el));
+      }, 100);
+    }, 2500);
     return () => clearTimeout(timer);
   }, []);
 
-  // Theme Persistence
+  // Theme Sync
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
@@ -30,180 +40,153 @@ function App() {
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
-  // EmailJS Logic
-  const sendEmail = (e) => {
-    e.preventDefault();
-    setFormStatus('sending');
-
-    // MOCK SENDING for now - real implementation would use:
-    // emailjs.sendForm('SERVICE_ID', 'TEMPLATE_ID', formRef.current, 'PUBLIC_KEY')
-
-    setTimeout(() => {
-      setFormStatus('idle');
-      showToast("Transmission Successful. Synapse established.");
-      e.target.reset();
-    }, 1500);
-  };
-
   const showToast = (message) => {
     setToast({ visible: true, message });
-    setTimeout(() => setToast({ visible: false, message: '' }), 4000);
+    setTimeout(() => setToast({ visible: false, message: '' }), 4500);
   };
 
-  // UI Handlers
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setFormStatus('sending');
+    setTimeout(() => {
+      setFormStatus('idle');
+      showToast("Transmission received. Synapse initiated.");
+      e.target.reset();
+    }, 2000);
+  };
+
+  // Scroll & UI Events
   useEffect(() => {
     const handleScroll = () => {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const winScroll = document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       setScrollProgress((winScroll / height) * 100);
-      setScrolled(winScroll > 50);
+      setScrolled(winScroll > 80);
     };
 
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setSelectedProject(null);
+    const handleMouseMove = (e) => {
+      if (cursorRef.current && followerRef.current) {
+        cursorRef.current.style.left = `${e.clientX}px`;
+        cursorRef.current.style.top = `${e.clientY}px`;
+        followerRef.current.style.left = `${e.clientX}px`;
+        followerRef.current.style.top = `${e.clientY}px`;
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('mousemove', handleMouseMove);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
-  // Cursor & Particles
+  // Background Particle Engine
   useEffect(() => {
-    const moveCursor = (e) => {
-      if (cursorRef.current && followerRef.current) {
-        cursorRef.current.style.transform = `translate3d(${e.clientX - 10}px, ${e.clientY - 10}px, 0)`;
-        followerRef.current.style.transform = `translate3d(${e.clientX - 20}px, ${e.clientY - 20}px, 0)`;
-      }
-    };
-    window.addEventListener('mousemove', moveCursor);
-
-    const newParticles = Array.from({ length: 30 }).map((_, i) => ({
+    setParticles(Array.from({ length: 25 }).map((_, i) => ({
       id: i,
-      size: Math.random() * 600 + 300,
+      size: Math.random() * 500 + 200,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      color: Math.random() > 0.6 ? 'var(--primary-accent)' : 'var(--secondary-accent)',
-      delay: Math.random() * -20,
-      duration: Math.random() * 20 + 20
-    }));
-    setParticles(newParticles);
-
-    return () => window.removeEventListener('mousemove', moveCursor);
+      color: Math.random() > 0.5 ? 'var(--primary-accent)' : 'var(--secondary-accent)',
+      delay: Math.random() * -15,
+      duration: Math.random() * 15 + 15
+    })));
   }, []);
-
-  // Intersection Observer
-  useEffect(() => {
-    if (loading) return;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('active');
-      });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal, .stagger-container').forEach(el => observer.observe(el));
-    return () => observer.disconnect();
-  }, [loading, selectedProject, theme]);
 
   const projects = [
     {
       id: 1,
       title: "Udhar Saathi",
       image: "/udhar-saathi.png",
-      desc: "A premium Android ecosystem for micro-credit management.",
-      fullDesc: "Udhar Saathi is engineered to bridge traditional rural bookkeeping with modern reactive architecture. It features full offline capability with Room DB, Jetpack Compose UI, and a biological synchronization pattern for data consistency. Version 3.0 implements cellular-level state management to ensure zero data loss.",
-      tech: ["Kotlin", "Compose", "MVVM", "Room", "Hilt", "WorkManager"],
-      links: { github: "#", demo: "#" }
+      desc: "Micro-credit engine for rural economies.",
+      fullDesc: "A fault-tolerant Android ecosystem mapping traditional bookkeeping to reactive digital nodes. Built with Jetpack Compose and biological synchronization patterns for offline-first reliability in low-connectivity sectors.",
+      tech: ["Kotlin", "Compose", "Room DB", "Hilt", "WorkManager"],
+      links: { github: "https://github.com/dsingh92342/portfolio", demo: "#" }
     },
     {
       id: 2,
-      title: "Neural Content Engine",
+      title: "Neural Engine",
       image: "/neural-engine.png",
-      desc: "Architected high-intent AI response systems.",
-      fullDesc: "A multi-agent specialized framework for enterprise automation. It uses advanced prompt chaining and vector embeddings to achieve 99.9% accuracy in intent classification. This engine reduces manual review time by 85% across high-scale deployment vectors.",
-      tech: ["AI", "GenAI", "Python", "LangChain", "OpenAI", "Pinecone"],
+      desc: "High-intent AI agentic frameworks.",
+      fullDesc: "Specialized multi-agent architecture utilizing recursive prompt-chaining and vector embeddings. Designed to handle high-intent enterprise payloads with 99.9% semantic accuracy and metabolic resource optimization.",
+      tech: ["Python", "OpenAI API", "LangChain", "Pinecone", "Zoology"],
       links: { github: "#", demo: "#" }
     },
     {
       id: 3,
       title: "Bio-Logic Systems",
       image: "/biologic-systems.png",
-      desc: "Mapping cellular protocols to distributed software.",
-      fullDesc: "A research-driven system architecture that treats microservices as biological cells. It implements self-healing mechanisms and adaptive load balancing based on mitochondrial energy exchange models, successfully simulating metabolic resource allocation.",
-      tech: ["Go", "Kubernetes", "gRPC", "Zoology", "Docker", "Istio"],
+      desc: "Cellular-inspired distributed software.",
+      fullDesc: "Applying mitochondrial energy models to microservice load-balancing. Successfully simulated metabolic resource allocation in distributed Go environments, achieving self-healing protocols based on cellular resilience.",
+      tech: ["Go", "Kubernetes", "gRPC", "Docker", "Istio"],
       links: { github: "#", demo: "#" }
     }
   ];
 
   return (
-    <div className="portfolio-v4">
-      {/* Loading Screen */}
+    <div className="bio-digital-app">
+      {/* Loader */}
       <div className={`loader-wrapper ${!loading ? 'hidden' : ''}`}>
-        <div className="loader-helix"></div>
-        <div className="loader-text">Metabolizing Logic Assets...</div>
+        <div className="loader-element"></div>
+        <div className="loader-text">Metabolizing Interface Nodes...</div>
       </div>
 
-      {/* Toast Notification */}
-      <div className="toast-container">
-        <div className={`toast ${toast.visible ? 'visible' : ''}`}>
-          {toast.message}
-        </div>
-      </div>
+      <div className="noise-overlay"></div>
+      <div className="bio-vortex"></div>
+      
+      {/* Neural Cursor */}
+      <div ref={cursorRef} className="cursor-dot"></div>
+      <div ref={followerRef} className="cursor-follower"></div>
 
-      {/* Sidebar Synapses */}
-      <div className="social-synapses">
-        <a href="https://github.com/dsingh92342" target="_blank" className="social-link">GitHub</a>
-        <a href="#" className="social-link">LinkedIn</a>
-        <a href="#" className="social-link">X / Twitter</a>
+      {/* Progress & UI Status */}
+      <div className={`toast-synapse glass ${toast.visible ? 'active' : ''}`} style={{ border: '1px solid var(--primary-accent)' }}>
+        {toast.message}
       </div>
-
-      <div className="scroll-progress" style={{ width: `${scrollProgress}%` }}></div>
-      <div ref={cursorRef} className="custom-cursor"></div>
-      <div ref={followerRef} className="custom-cursor-follower"></div>
 
       {/* Navbar */}
-      <nav className={`navbar glass ${scrolled ? 'pulse' : ''}`}>
+      <nav className={`navbar glass ${scrolled ? 'scrolled' : ''}`}>
         <a href="#home" className="nav-link">Home</a>
-        <a href="#about" className="nav-link">Bio</a>
-        <a href="#projects" className="nav-link">Work</a>
-        <button onClick={toggleTheme} className="glass theme-toggle" style={{ border: '1px solid var(--glass-border)', padding: '0.6rem 1.2rem', borderRadius: '50px', color: 'var(--text-primary)', fontWeight: '800', cursor: 'none' }}>
+        <a href="#bio" className="nav-link">Bio</a>
+        <a href="#work" className="nav-link">Work</a>
+        <a href="#connect" className="nav-link">Connect</a>
+        <button onClick={toggleTheme} className="theme-toggle glass" style={{ padding: '0.4rem 1rem', border: '1px solid var(--glass-border)', fontSize: '0.6rem', fontWeight: '900', color: 'var(--text-primary)', cursor: 'none' }}>
           {theme === 'dark' ? 'CELLULAR' : 'NEURAL'}
         </button>
       </nav>
 
-      {/* Hero */}
+      {/* Hero Section */}
       <header id="home" className="hero">
-        <div className="dna-bg">
+        <div className="particles-container">
           {particles.map(p => (
-            <div key={p.id} className="dna-circle float" style={{ width: p.size, height: p.size, left: `${p.x}%`, top: `${p.y}%`, background: p.color, animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s`, filter: 'blur(120px)', opacity: 0.12 }}></div>
+            <div key={p.id} className="float-loop" style={{ position: 'absolute', width: p.size, height: p.size, left: `${p.x}%`, top: `${p.y}%`, background: p.color, opacity: 0.08, filter: 'blur(100px)', animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s`, borderRadius: '50%' }}></div>
           ))}
         </div>
         <div className="container reveal">
           <h1 className="gradient-text glow-text">DSINGH</h1>
-          <p style={{ letterSpacing: '0.05em', fontWeight: '300' }}>Android Architect & Zoology Specialist bridging biological systems with digital logic.</p>
-          <div className="hero-btns" style={{ marginTop: '3.5rem' }}>
-            <a href="#projects" className="btn btn-primary">Enter The Ecosystem</a>
+          <p>Architecting the intersection of biological logic and reactive software engineering.</p>
+          <div style={{ marginTop: '4rem' }}>
+            <a href="#work" className="btn btn-accent">Enter Ecosystem</a>
           </div>
         </div>
       </header>
 
-      {/* Career Evolution (Enhanced Timeline) */}
-      <section id="about" className="container">
+      {/* Bio Evolution */}
+      <section id="bio" className="container">
         <div className="section-title reveal">
-          <h2 className="gradient-text">Biological Evolution</h2>
+          <h2 className="gradient-text" style={{ fontSize: '3.5rem', marginBottom: '4rem' }}>Bio-Evolutionary Track</h2>
         </div>
-        <div className="timeline">
+        <div className="timeline-container">
+          <div className="timeline-line"></div>
           {[
-            { year: "2020", title: "Zoology Research", desc: "Studied metabolic efficiency and cellular signaling protocols." },
-            { year: "2022", title: "Android Architect", desc: "Translated biological resilience into reactive Kotlin architectures." },
-            { year: "2024", title: "Prompt Godfather", desc: "Engineering high-intent neural extensions for modern AI systems." }
+            { year: "2020", title: "Zoology Investigator", desc: "Deciphering cellular communication and metabolic resilience protocols." },
+            { year: "2022", title: "Android Architect", desc: "Injecting bio-inspired stability into reactive mobile ecosystems." },
+            { year: "2024", title: "Prompt Godfather", desc: "Engineering high-intent neural extensions for large language models." }
           ].map((item, i) => (
-            <div key={i} className="timeline-item reveal">
-              <div className="timeline-content glass">
-                <h4 className="gradient-text">{item.year}</h4>
-                <h3>{item.title}</h3>
+            <div key={i} className="timeline-node reveal">
+              <div className="timeline-box glass">
+                <h4 className="gradient-text" style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>{item.year}</h4>
+                <h3 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>{item.title}</h3>
                 <p style={{ opacity: 0.7 }}>{item.desc}</p>
               </div>
             </div>
@@ -211,64 +194,70 @@ function App() {
         </div>
       </section>
 
-      {/* Projects Grid */}
-      <section id="projects" className="container">
+      {/* Portfolio Grid */}
+      <section id="work" className="container">
         <div className="section-title reveal">
-          <h2 className="gradient-text">Neural Artifacts</h2>
+          <h2 className="gradient-text" style={{ fontSize: '3.5rem', marginBottom: '4rem' }}>Neural Artifacts</h2>
         </div>
-        <div className="grid stagger-container">
+        <div className="project-grid">
           {projects.map((p) => (
-            <div key={p.id} className="project-card glass" onClick={() => setSelectedProject(p)}>
-              <div className="project-image-container">
-                <img src={p.image} alt={p.title} className="project-image" />
+            <div key={p.id} className="project-card glass reveal" onClick={() => setSelectedProject(p)}>
+              <div className="project-thumbnail">
+                <img src={p.image} alt={p.title} />
               </div>
-              <h3>{p.title}</h3>
-              <p style={{ opacity: 0.6 }}>{p.desc}</p>
-              <div style={{ marginTop: '1.5rem', color: 'var(--primary-accent)', fontWeight: '700' }}>Observe Signal →</div>
+              <h3 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>{p.title}</h3>
+              <p style={{ opacity: 0.6, fontSize: '0.95rem' }}>{p.desc}</p>
+              <div style={{ marginTop: '2rem', color: 'var(--primary-accent)', fontWeight: '800', fontSize: '0.75rem', letterSpacing: '0.2em' }}>METABOLIZE SIGNAL →</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Contact Synapse */}
-      <section className="container">
-        <div className="section-title reveal">
-          <h2 className="gradient-text">Neural Connection</h2>
+      {/* Connect Interface */}
+      <section id="connect" className="container">
+        <div className="section-title reveal" style={{ textAlign: 'center' }}>
+          <h2 className="gradient-text" style={{ fontSize: '3.5rem', marginBottom: '4rem' }}>Neural Connectivity</h2>
         </div>
-        <div className="glass reveal" style={{ padding: '4rem', maxWidth: '850px', margin: '0 auto' }}>
-          <form ref={formRef} onSubmit={sendEmail} className="contact-form">
-            <div className="form-group"><input type="text" name="user_name" required placeholder="Designation (Name)" /></div>
-            <div className="form-group"><input type="email" name="user_email" required placeholder="Return Synapse (Email)" /></div>
-            <div className="form-group"><textarea name="message" required rows="6" placeholder="Transmission Payload..."></textarea></div>
-            <button type="submit" disabled={formStatus === 'sending'} className="btn btn-primary" style={{ width: '100%', opacity: formStatus === 'sending' ? 0.5 : 1 }}>
-              {formStatus === 'sending' ? 'Sending Signal...' : 'Deploy Transmission'}
+        <div className="glass reveal" style={{ maxWidth: '800px', margin: '0 auto', padding: '5rem' }}>
+          <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div className="form-group"><input type="text" required placeholder="IDENTIFIER (NAME)" style={{ width: '100%', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', borderRadius: '1rem', color: '#fff', fontSize: '0.9rem', outline: 'none' }} /></div>
+            <div className="form-group"><input type="email" required placeholder="SYNAPSE SOURCE (EMAIL)" style={{ width: '100%', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', borderRadius: '1rem', color: '#fff', fontSize: '0.9rem', outline: 'none' }} /></div>
+            <div className="form-group"><textarea required rows="6" placeholder="TRANSMISSION DATA..." style={{ width: '100%', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', borderRadius: '1rem', color: '#fff', fontSize: '0.9rem', outline: 'none', resize: 'none' }}></textarea></div>
+            <button type="submit" disabled={formStatus === 'sending'} className="btn btn-accent" style={{ width: '100%', opacity: formStatus === 'sending' ? 0.4 : 1 }}>
+              {formStatus === 'sending' ? 'Sending Signal...' : 'Initiate Transmission'}
             </button>
           </form>
         </div>
       </section>
 
-      {/* Project Modal */}
+      {/* Modals & Socials */}
       <div className={`modal-overlay ${selectedProject ? 'active' : ''}`} onClick={() => setSelectedProject(null)}>
         {selectedProject && (
-          <div className="modal-content glass reveal active" onClick={e => e.stopPropagation()}>
-            <button className="glass" onClick={() => setSelectedProject(null)} style={{ position: 'absolute', top: '2rem', right: '2rem', border: 'none', color: 'var(--text-primary)', fontSize: '1.5rem', width: '40px', height: '40px', borderRadius: '50%', cursor: 'none' }}>×</button>
-            <h2 className="gradient-text glow-text" style={{ fontSize: '3.5rem', marginBottom: '1.5rem' }}>{selectedProject.title}</h2>
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-              {selectedProject.tech.map(t => <span key={t} className="tech-tag">{t}</span>)}
+          <div className="modal-canvas glass" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setSelectedProject(null)} style={{ position: 'absolute', top: '2.5rem', right: '2.5rem', background: 'transparent', border: 'none', color: '#fff', fontSize: '2rem', cursor: 'none' }}>×</button>
+            <h2 className="gradient-text glow-text" style={{ fontSize: '4rem', marginBottom: '2rem' }}>{selectedProject.title}</h2>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
+              {selectedProject.tech.map(t => <span key={t} style={{ padding: '0.6rem 1.4rem', background: 'rgba(61, 220, 132, 0.1)', border: '1px solid var(--primary-accent)', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '900', color: var(--primary-accent) }}>{t}</span>)}
             </div>
-            <p style={{ fontSize: '1.2rem', lineHeight: '1.8', color: 'var(--text-secondary)' }}>{selectedProject.fullDesc}</p>
-            <div style={{ marginTop: '3rem', display: 'flex', gap: '2rem' }}>
-              <a href={selectedProject.links.github} className="btn btn-primary">Decrypt Source</a>
-              <a href={selectedProject.links.demo} className="glass" style={{ padding: '1.25rem 3rem', borderRadius: '100px', fontWeight: '800' }}>Observe Live</a>
+            <p style={{ fontSize: '1.3rem', color: 'var(--text-secondary)', lineHeight: '1.8' }}>{selectedProject.fullDesc}</p>
+            <div style={{ marginTop: '4rem', display: 'flex', gap: '2rem' }}>
+              <a href={selectedProject.links.github} target="_blank" className="btn btn-accent">Decrypt Source</a>
+              <a href={selectedProject.links.demo} className="glass" style={{ padding: '1.4rem 3.5rem', borderRadius: '100px', fontWeight: '800', color: '#fff', fontSize: '0.9rem', border: '1px solid var(--glass-border)' }}>Observe Organism</a>
             </div>
           </div>
         )}
       </div>
 
-      <footer style={{ padding: '6rem 0', textAlign: 'center', opacity: '0.2', letterSpacing: '0.3rem' }}>
-        <p>&copy; 2026 DSINGH • BIO-DIGITAL ARCHITECT</p>
+      <div className="social-rail">
+        <a href="https://github.com/dsingh92342" target="_blank" className="rail-link">GitHub</a>
+        <a href="#" className="rail-link">LinkedIn</a>
+        <a href="#" className="rail-link">X / Twitter</a>
+      </div>
+
+      <footer style={{ padding: '8rem 0', textAlign: 'center', opacity: 0.1, letterSpacing: '0.5em', fontSize: '0.7rem' }}>
+        <p>&copy; 2026 DSINGH • ECOSYSTEM INTEGRITY VERIFIED</p>
       </footer>
-    </div>
+    </div >
   )
 }
 

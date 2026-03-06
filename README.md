@@ -1,56 +1,40 @@
-# Premium Portfolio
+# 🧬 DSINGH | Bio-Digital Architect Ecosystem
 
-A sophisticated, high-performance portfolio website built with **React** and **Vite**. This project showcases a modern design aesthetic with smooth transitions, responsive layouts, and interactive elements.
+![DSINGH Portfolio Banner](https://raw.githubusercontent.com/dsingh92342/portfolio/main/public/og-image.png)
 
-## 🚀 Features
+## 🔬 The Vision
+Bridging the physical precision of **Zoology** with the reactive resilience of **Android Architecture**. As the **Godfather of Prompt Engineering**, I treat AI not as a tool, but as a neural extension to accelerate implementation from thought to artifact.
 
-- **Modern UI/UX**: Clean, professional design with a focus on typography and visual hierarchy.
-- **Responsive Design**: Optimized for desktops, tablets, and mobile devices.
-- **Fast Performance**: Powered by Vite for lightning-fast development and build times.
-- **Interactive Elements**: Subtle animations and hover effects to enhance user engagement.
+[**Explore the Ecosystem**](https://dsingh92342.github.io/portfolio/)
 
-## 🛠️ Built With
+---
 
-- [React](https://reactjs.org/) - Frontend framework
-- [Vite](https://vitejs.dev/) - Build tool
-- [CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS) - Custom modern styling
+## 💎 Neural Features
+- **Bioluminescent UI**: A premium dark-mode interface with glassmorphism and real-time CSS particle physics.
+- **Dual Perspective**: Toggle between **Neural Dark** (Deep-space logic) and **Cellular Light** (Bio-clinical precision).
+- **Biological Track**: An interactive career timeline showcasing the evolution from cellular research to mobile architecture.
+- **Neural Artifacts**: Deep-dive project analysis with high-end modals and recursive architectural descriptions.
+- **Prompt Lab**: A curated vault showcasing high-intent prompt engineering artifacts.
 
-## 📦 Getting Started
+## 🛠️ Biological Stack
+- **Core**: React 19 + Vite 7 (Optimized Metabolism)
+- **Styling**: Vanilla CSS with customized HSL tokens for Bioluminescent Green & Android Cyan.
+- **Logic**: Reactive state management with Intersection Observers for staggered reveal animations.
+- **Communications**: Integrated Synapse Signal system via EmailJS.
 
-### Prerequisites
+## 🚀 Deployment
+This repository is orchestrated with **GitHub Actions** for precision deployment to GitHub Pages.
 
-- Node.js (v18 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/portfolio.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd portfolio
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-
-Run the development server:
 ```bash
+# Clone the Organism
+git clone https://github.com/dsingh92342/portfolio.git
+
+# Metabolize Dependencies
+npm install
+
+# Live Development
 npm run dev
 ```
 
-### Build
-
-Build for production:
-```bash
-npm run build
-```
-
-## 📜 License
-
-This project is licensed under the MIT License.
+---
+*Engineered with Google Antigravity Precision by DSINGH*

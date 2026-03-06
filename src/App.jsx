@@ -134,7 +134,7 @@ function App() {
 
       <div className="noise-overlay"></div>
       <div className="bio-vortex"></div>
-      
+
       {/* Neural Cursor */}
       <div ref={cursorRef} className="cursor-dot"></div>
       <div ref={followerRef} className="cursor-follower"></div>
@@ -237,7 +237,7 @@ function App() {
             <button onClick={() => setSelectedProject(null)} style={{ position: 'absolute', top: '2.5rem', right: '2.5rem', background: 'transparent', border: 'none', color: '#fff', fontSize: '2rem', cursor: 'none' }}>×</button>
             <h2 className="gradient-text glow-text" style={{ fontSize: '4rem', marginBottom: '2rem' }}>{selectedProject.title}</h2>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
-              {selectedProject.tech.map(t => <span key={t} style={{ padding: '0.6rem 1.4rem', background: 'rgba(61, 220, 132, 0.1)', border: '1px solid var(--primary-accent)', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '900', color: var(--primary-accent) }}>{t}</span>)}
+              {selectedProject.tech.map(t => <span key={t} style={{ padding: '0.6rem 1.4rem', background: 'rgba(61, 220, 132, 0.1)', border: '1px solid var(--primary-accent)', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '900', color: 'var(--primary-accent)' }}>{t}</span>)}
             </div>
             <p style={{ fontSize: '1.3rem', color: 'var(--text-secondary)', lineHeight: '1.8' }}>{selectedProject.fullDesc}</p>
             <div style={{ marginTop: '4rem', display: 'flex', gap: '2rem' }}>

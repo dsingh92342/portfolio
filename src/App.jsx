@@ -134,6 +134,10 @@ function App() {
 
       <div className="grain-overlay"></div>
       <div className="ambient-light"></div>
+      <div className="glow-blobs">
+        <div className="blob"></div>
+        <div className="blob"></div>
+      </div>
       <div className="neural-grid"></div>
 
       {/* Neural Cursor */}
@@ -143,8 +147,8 @@ function App() {
       {/* Advanced Navbar */}
       <header className={`nav-shell ${scrolled ? 'scrolled' : ''}`}>
         <nav className="nav-content">
-          <div className="nav-group" style={{ display: 'flex', gap: '2.5rem' }}>
-            {['home', 'bio', 'work', 'connect'].map(item => (
+          <div className="nav-group">
+            {['home', 'bio', 'work'].map(item => (
               <a
                 key={item}
                 href={`#${item}`}
@@ -160,7 +164,7 @@ function App() {
           <button
             onClick={toggleTheme}
             className="bio-tag"
-            style={{ background: 'transparent', border: '1px solid var(--primary-accent)', cursor: 'none' }}
+            style={{ background: 'transparent', cursor: 'pointer' }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
@@ -171,40 +175,29 @@ function App() {
 
       {/* Hero Section */}
       <main id="home" className="hero">
-        <div className="vortex-background" style={{ position: 'fixed', inset: 0, zIndex: -1 }}>
-          {particles.map(p => (
-            <div
-              key={p.id}
-              className="float-loop"
-              style={{
-                position: 'absolute',
-                width: p.size,
-                height: p.size,
-                left: `${p.x}%`,
-                top: `${p.y}%`,
-                background: p.color,
-                opacity: theme === 'dark' ? 0.05 : 0.03,
-                filter: 'blur(100px)',
-                animationDelay: `${p.delay}s`,
-                animationDuration: `${p.duration}s`,
-                borderRadius: '50%'
-              }}
-            ></div>
-          ))}
-        </div>
+        <div className="hero-banner-overlay" style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url('/neural_biotech_banner.png')`, // Note: Assuming the file is copied/mapped correctly
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: theme === 'dark' ? 0.15 : 0.05,
+          zIndex: -1,
+          maskImage: 'radial-gradient(circle at center, black, transparent 80%)'
+        }}></div>
 
         <div className="container reveal">
+          <div className="bio-tag" style={{ marginBottom: '2rem', display: 'inline-block' }}>SYSTEM STATUS: OPTIMAL</div>
           <h1 className="gradient-text">DSINGH</h1>
-          <p style={{ opacity: 0.7 }}>Architecting at the synapse of Biological Logic, Android Ecosystems, and High-Intent Prompt Engineering.</p>
-          <div style={{ marginTop: '5rem' }}>
+          <p>Architecting at the synapse of **Biological Logic**, **Android Ecosystems**, and **High-Intent Prompt Engineering**.</p>
+          <div style={{ marginTop: '4rem' }}>
             <a
               href="#work"
               className="btn"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
-              style={{ display: 'inline-block' }}
             >
-              Enter The Lab →
+              Access Artifacts →
             </a>
           </div>
         </div>
@@ -261,24 +254,44 @@ function App() {
       {/* Neural Interface Modal */}
       <div className={`premium-modal ${selectedProject ? 'open' : ''}`} onClick={() => setSelectedProject(null)}>
         {selectedProject && (
-          <div className="modal-canvas glass" onClick={e => e.stopPropagation()}>
-            <button onClick={() => setSelectedProject(null)} style={{ position: 'absolute', top: '3rem', right: '3rem', background: 'transparent', border: 'none', color: '#fff', fontSize: '2.5rem', cursor: 'none' }}>×</button>
-            <h2 className="gradient-text" style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)', marginBottom: '2rem' }}>{selectedProject.title}</h2>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
-              {selectedProject.tech.map(t => <span key={t} className="bio-tag">{t}</span>)}
+          <div className="modal-canvas" onClick={e => e.stopPropagation()}>
+            <button
+              className="close-btn"
+              onClick={() => setSelectedProject(null)}
+              style={{
+                position: 'absolute',
+                top: '2rem',
+                right: '2.5rem',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid var(--glass-border)',
+                color: '#fff',
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                fontSize: '1.5rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: 'pointer'
+              }}
+            >×</button>
+            <div className="bio-tag" style={{ marginBottom: '1.5rem', display: 'inline-block' }}>ARTIFACT DECRYPTION</div>
+            <h2 className="gradient-text" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', marginBottom: '2rem', lineHeight: '1.1' }}>{selectedProject.title}</h2>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+              {selectedProject.tech.map(t => <span key={t} className="bio-tag" style={{ opacity: 0.8 }}>{t}</span>)}
             </div>
-            <p style={{ fontSize: '1.3rem', color: 'var(--text-secondary)', lineHeight: '1.8' }}>{selectedProject.fullDesc}</p>
-            <div style={{ marginTop: '5rem', display: 'flex', gap: '2rem' }}>
-              <a href={selectedProject.links.github} target="_blank" className="btn">Source Node</a>
-              <a href={selectedProject.links.demo} className="btn" style={{ background: 'transparent', border: '1px solid var(--glass-border)', color: '#fff' }}>Observe Organism</a>
+            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.8', maxWidth: '800px' }}>{selectedProject.fullDesc}</p>
+            <div style={{ marginTop: '4rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+              <a href={selectedProject.links.github} target="_blank" className="btn" style={{ padding: '1rem 2.5rem' }}>Source Code</a>
+              <a href={selectedProject.links.demo} className="btn" style={{ background: 'transparent', border: '1px solid var(--glass-border)', color: '#fff', padding: '1rem 2.5rem' }}>Live Demo</a>
             </div>
           </div>
         )}
       </div>
 
-      <footer id="connect" className="container" style={{ padding: '8rem 0' }}>
-        <h2 className="gradient-text reveal" style={{ fontSize: '3rem', marginBottom: '4rem', textAlign: 'center' }}>Neural Sync</h2>
-        <div className="reveal" style={{ display: 'flex', gap: '4rem', justifyContent: 'center', marginBottom: '8rem', flexWrap: 'wrap' }}>
+      <footer id="connect" className="container" style={{ padding: '6rem 1.5rem' }}>
+        <h2 className="gradient-text reveal" style={{ fontSize: '2.5rem', marginBottom: '3rem', textAlign: 'center' }}>Neural Sync</h2>
+        <div className="reveal" style={{ display: 'flex', gap: '2.5rem', justifyContent: 'center', marginBottom: '6rem', flexWrap: 'wrap' }}>
           <a href="https://github.com/dsingh92342" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">GitHub</a>
           <a href="#" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">LinkedIn</a>
           <a href="#" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">Twitter</a>

@@ -8,6 +8,7 @@ function App() {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [selectedProject, setSelectedProject] = useState(null);
   const [isHovering, setIsHovering] = useState(false);
+  const [metabolicRate, setMetabolicRate] = useState(98.4);
 
   const cursorRef = useRef(null);
   const auraRef = useRef(null);
@@ -16,7 +17,6 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-      // Final init of observers after a short delay to ensure DOM is ready
       setTimeout(() => {
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
@@ -28,7 +28,18 @@ function App() {
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
       }, 300);
     }, 2500);
-    return () => clearTimeout(timer);
+
+    const metabolicInterval = setInterval(() => {
+      setMetabolicRate(prev => {
+        const diff = (Math.random() - 0.5) * 0.2;
+        return parseFloat((prev + diff).toFixed(1));
+      });
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(metabolicInterval);
+    };
   }, []);
 
   // Neural Theme System
@@ -43,10 +54,8 @@ function App() {
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (cursorRef.current && auraRef.current) {
-        // Dot move
         cursorRef.current.style.left = `${e.clientX}px`;
         cursorRef.current.style.top = `${e.clientY}px`;
-        // Aura move
         auraRef.current.style.left = `${e.clientX}px`;
         auraRef.current.style.top = `${e.clientY}px`;
       }
@@ -125,10 +134,11 @@ function App() {
 
       <div className="grain-overlay"></div>
       <div className="ambient-light"></div>
+      <div className="neural-grid"></div>
 
       {/* Neural Cursor */}
-      <div ref={cursorRef} className="cursor-main" style={{ top: -100, left: -100 }}></div>
-      <div ref={auraRef} className="cursor-aura" style={{ top: -100, left: -100, transform: 'translate(-50%, -50%)' }}></div>
+      <div ref={cursorRef} className="cursor-main"></div>
+      <div ref={auraRef} className="cursor-aura"></div>
 
       {/* Advanced Navbar */}
       <header className={`nav-shell ${scrolled ? 'scrolled' : ''}`}>
@@ -150,7 +160,7 @@ function App() {
           <button
             onClick={toggleTheme}
             className="bio-tag"
-            style={{ cursor: 'none', background: 'transparent', border: '1px solid var(--primary-accent)', cursor: 'none' }}
+            style={{ background: 'transparent', border: '1px solid var(--primary-accent)', cursor: 'none' }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
@@ -173,7 +183,7 @@ function App() {
                 left: `${p.x}%`,
                 top: `${p.y}%`,
                 background: p.color,
-                opacity: theme === 'dark' ? 0.06 : 0.04,
+                opacity: theme === 'dark' ? 0.05 : 0.03,
                 filter: 'blur(100px)',
                 animationDelay: `${p.delay}s`,
                 animationDuration: `${p.duration}s`,
@@ -192,6 +202,7 @@ function App() {
               className="btn"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
+              style={{ display: 'inline-block' }}
             >
               Enter The Lab →
             </a>
@@ -227,7 +238,7 @@ function App() {
         <div className="section-header reveal" style={{ marginBottom: '6rem' }}>
           <h2 className="gradient-text" style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)' }}>Neural Artifacts</h2>
         </div>
-        <div className="grid-system stagger-container reveal">
+        <div className="grid-system reveal">
           {projects.map((p) => (
             <div
               key={p.id}
@@ -265,14 +276,35 @@ function App() {
         )}
       </div>
 
-      <footer id="connect" style={{ padding: '12rem 0', textAlign: 'center' }}>
-        <h2 className="gradient-text reveal" style={{ fontSize: '2.5rem', marginBottom: '4rem' }}>Synchronize With The Ecosystem</h2>
-        <div className="reveal" style={{ display: 'flex', gap: '4rem', justifyContent: 'center', marginBottom: '8rem' }}>
+      <footer id="connect" className="container" style={{ padding: '8rem 0' }}>
+        <h2 className="gradient-text reveal" style={{ fontSize: '3rem', marginBottom: '4rem', textAlign: 'center' }}>Neural Sync</h2>
+        <div className="reveal" style={{ display: 'flex', gap: '4rem', justifyContent: 'center', marginBottom: '8rem', flexWrap: 'wrap' }}>
           <a href="https://github.com/dsingh92342" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">GitHub</a>
           <a href="#" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">LinkedIn</a>
           <a href="#" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="nav-link">Twitter</a>
         </div>
-        <p style={{ opacity: 0.1, letterSpacing: '0.8em', textTransform: 'uppercase', fontSize: '0.6rem' }}>
+
+        {/* Elite System Dash */}
+        <div className="system-dash reveal">
+          <div className="stat-node">
+            <span className="stat-label">Synapse Depth</span>
+            <span className="stat-value">99.9%</span>
+          </div>
+          <div className="stat-node">
+            <span className="stat-label">Metabolic Rate</span>
+            <span className="stat-value">{metabolicRate}%</span>
+          </div>
+          <div className="stat-node">
+            <span className="stat-label">Neural Integrity</span>
+            <span className="stat-value">OPTIMAL</span>
+          </div>
+          <div className="stat-node">
+            <span className="stat-label">Signal Delay</span>
+            <span className="stat-value">0.03ms</span>
+          </div>
+        </div>
+
+        <p style={{ opacity: 0.1, letterSpacing: '0.8em', textTransform: 'uppercase', fontSize: '0.6rem', marginTop: '6rem', textAlign: 'center' }}>
           DSINGH © 2026 • Structural Precision Verified
         </p>
       </footer>

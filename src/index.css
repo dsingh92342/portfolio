@@ -122,6 +122,11 @@ body {
   z-index: 1000;
   width: auto;
   min-width: 400px;
+  transition: var(--transition-smooth);
+}
+
+.nav-shell.scrolled {
+  top: 1rem;
 }
 
 .nav-content {
@@ -154,6 +159,72 @@ body {
   opacity: 1;
   color: var(--primary-accent);
   transform: translateY(-2px);
+}
+
+/* --- Neural Connectivity Grid --- */
+.neural-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(61, 220, 132, 0.05) 1px, transparent 0);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* --- Project Scanning Protocol --- */
+.artifact-visual::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to bottom, transparent, var(--primary-accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.artifact-card:hover .artifact-visual::after {
+  animation: scan 2s linear infinite;
+  opacity: 0.3;
+}
+
+@keyframes scan {
+  from {
+    top: -100%;
+  }
+
+  to {
+    top: 200%;
+  }
+}
+
+.artifact-card::before {
+  content: 'ANALYZING...';
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 0.5rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: var(--primary-accent);
+  opacity: 0;
+  transition: var(--transition-smooth);
+}
+
+.artifact-card:hover::before {
+  opacity: 1;
+}
+
+/* --- Magnetic Element Logic --- */
+.magnetic {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* --- Floating Typography --- */
@@ -306,6 +377,7 @@ h3 {
   position: fixed;
   z-index: 10001;
   pointer-events: none;
+  transform: translate(-50%, -50%);
 }
 
 .cursor-aura {
@@ -320,6 +392,7 @@ h3 {
   display: flex;
   justify-content: center;
   align-items: center;
+  transform: translate(-50%, -50%);
 }
 
 .cursor-aura::after {
@@ -334,7 +407,7 @@ h3 {
 }
 
 .cursor-active .cursor-aura {
-  transform: scale(1.8);
+  transform: translate(-50%, -50%) scale(1.8);
   transition: transform 0.4s ease;
 }
 
@@ -445,6 +518,45 @@ h3 {
   font-size: 0.9rem;
   transition: var(--transition-smooth);
   box-shadow: 0 10px 20px rgba(61, 220, 132, 0.1);
+}
+
+/* --- System Dashboard Footer --- */
+.system-dash {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  margin-top: 4rem;
+  padding: 2rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+@media (max-width: 600px) {
+  .system-dash {
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+}
+
+.stat-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  opacity: 0.3;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--primary-accent);
+  font-size: 0.75rem;
 }
 
 .btn:hover {
